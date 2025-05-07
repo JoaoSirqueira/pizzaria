@@ -100,3 +100,6 @@ func savePizza() {
 //     Nome  string  `json:"nome"`
 //     Preco float64 `json:"preco"`
 // }
+
+// A função Decode é utilizada para decodificar dados JSON e carregá-los em uma estrutura Go
+// enquanto Encode é usada para codificar uma estrutura Go e salvá-la em formato JSON.
