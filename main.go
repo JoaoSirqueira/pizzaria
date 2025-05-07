@@ -2,6 +2,8 @@ package main
 
 import (
 	"pizzaria/models"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +18,7 @@ func main() {
 	// Criando uma rota
 	router.GET("/pizzas", getPizzas)
 	router.POST("/pizzas", postPizzas)
+	router.GET("/pizzas/:id", getPizzasByID)
 	router.Run() // Executar rota
 }
 
@@ -35,6 +38,24 @@ func postPizzas(c *gin.Context) {
 	pizzas = append(pizzas, newPizza)
 }
 
+func getPizzasByID(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error()})
+		return
+	}
+	for _, p := range pizzas {
+		if p.ID == id {
+			c.JSON(200, p)
+			return
+		}
+	}
+	c.JSON(404, gin.H{
+		"message": "Pizza not found"})
+}
+// underline ali no FOR significa que vai ocultar o índice
 
 // executar a operação: go run . OU go run main.go
 // trazer dependências e pacotes externos: go get
