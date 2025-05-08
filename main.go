@@ -19,6 +19,8 @@ func main() {
 	router.GET("/pizzas", getPizzas)
 	router.POST("/pizzas", postPizzas)
 	router.GET("/pizzas/:id", getPizzasByID)
+	router.DELETE("/pizzas/:id", deletePizzasByID) // Deletar uma pizza
+	router.PUT("/pizzas/:id", updatePizzasByID)// Editar ou atualizar uma pizza
 	router.Run() // Executar rota
 }
 
@@ -84,6 +86,31 @@ func savePizza() {
 		fmt.Println("Error encoding JSON:", err)
 	}
 }
+
+func deletePizzasByID(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"erro": err.Error()})
+		return
+	}
+
+	 for i, p := range pizzas {
+		if p.ID == id {
+			pizzas = append(pizzas[:i], pizzas[i+1:]...)
+			savePizza()
+			c.JSON(200, gin.H{"message":"pizza deleted"})
+			return
+		}
+	 }
+	c.JSON(404, gin.H{"message":"pizza not found"})
+}
+
+func updatePizzasByID(c *gin.Context) {
+	c.JSON(200, gin.H{"method":"put"})
+}
+
 // underline ali no FOR significa que vai ocultar o índice
 
 // executar a operação: go run . OU go run main.go
