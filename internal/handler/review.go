@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"pizzaria/internal/data"
 	"pizzaria/internal/models"
+	"pizzaria/internal/service"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,11 @@ func PostReview(c *gin.Context) {
         c.JSON(http.StatusBadRequest, gin.H{"erro": err.Error()})
         return
     }
+
+	if err := service.ValidateReviewRating(newReview); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"erro": err.Error()})
+		return
+	}
 
     for i, p := range data.Pizzas {
         if p.ID == pizzaID {
