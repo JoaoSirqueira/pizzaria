@@ -5,3 +5,4 @@ type Pizza struct {
 	Nome string `json:"nome"`
 	Preco float64 `json:"preco"`
 }
+
