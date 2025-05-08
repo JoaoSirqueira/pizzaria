@@ -1,12 +1,13 @@
 package handler
 
 import (
-    "pizzaria/internal/models"
-    "strconv"
+	"pizzaria/internal/models"
+	"pizzaria/internal/service"
+	"strconv"
 
-    "pizzaria/internal/data"
+	"pizzaria/internal/data"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 func GetPizzas(c *gin.Context) {
@@ -22,6 +23,11 @@ func PostPizzas(c *gin.Context) {
             "erro": err.Error()})
         return
     }
+    if err := service.ValidatePizzaPrice(&newPizza); err != nil {
+        c.JSON(401, gin.H{"erro": err.Error()})
+        return
+    }
+
     newPizza.ID = len(data.Pizzas) + 1
     data.Pizzas = append(data.Pizzas, newPizza)
     data.SavePizza()
@@ -69,14 +75,18 @@ func UpdatePizzaByID(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
-        c.JSON(400, gin.H{
-            "erro": err.Error()})
+        c.JSON(400, gin.H{"erro": err.Error()})
         return
     }
 
     var updatedPizza models.Pizza
     if err := c.ShouldBindJSON(&updatedPizza); err != nil {
         c.JSON(400, gin.H{"erro": err.Error()})
+        return
+    }
+
+    if err := service.ValidatePizzaPrice(&updatedPizza); err != nil {
+        c.JSON(401, gin.H{"erro": err.Error()})
         return
     }
 
